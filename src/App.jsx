@@ -1,15 +1,39 @@
 
 import './App.css'
-import SignIn from './components/Auth/SignIn'
-import SignUp from './components/Auth/SignUp'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
+import PrivateRoute from './utils/PrivateRoute';
 function App() {
 
   return (
-    <>
-      {/* <SignUp /> */}
-      <SignIn />
-    </>
+    <Router>
+      <Routes>
+
+        {/* Public Auth Routes */}
+        <Route path='/signin' element={<SignIn />} />
+        <Route path='/signup' element={<SignUp />} />
+
+        {/* Private Route */}
+
+        <Route
+          path='/dashboard'
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="*" element={
+          <div className='min-h-screen flex items-center justify-center bg-gray-100 text-2xl text-gray-700'>
+            404 | Page Not Found
+          </div>
+        } />
+      </Routes>
+    </Router>
   )
 }
 

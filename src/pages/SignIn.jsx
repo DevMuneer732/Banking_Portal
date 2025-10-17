@@ -1,23 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import { signInSchema } from '../utils/validationSchema';
+import { useBankStore } from '../store/useBankStore';
 
-
-// 1. Define the validation schema with Yup
-const signInSchema = Yup.object({
-    email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
-    password: Yup.string()
-        .min(8, 'Password must be at least 8 characters')
-        .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            'Must contain one uppercase, one lowercase, one number, and one special character'
-        )
-        .required('Password is required'),
-});
 const SignIn = () => {
+    const navigate = useNavigate();
+    const login = useBankStore((state) => state.login);
+    const [loginError, setLoginError] = React.useState('');
 
     const formik = useFormik({
         initialValues: {
@@ -25,29 +16,48 @@ const SignIn = () => {
             password: '',
         },
         validationSchema: signInSchema,
-        onSubmit: (values, { resetForm }) => {
-            console.log('Form Submitted:', values);
+        onSubmit: (values, { resetForm, setSubmitting }) => {
+            setLoginError('');
 
-            // Save credentials to local storage
-            localStorage.setItem('signin-credentials', JSON.stringify(values));
-            resetForm();
+            const storedCredentialsString = localStorage.getItem('signup-credentials');
+
+            if (storedCredentialsString) {
+                const storedCredentials = JSON.parse(storedCredentialsString);
+
+                // Authentication Check
+                if (values.email === storedCredentials.email && values.password === storedCredentials.password) {
+                    // Login successful: Update Zustand store and navigate
+                    login(values.email, storedCredentials.name || 'Robert Del Naja');
+                    navigate('/dashboard');
+
+                } else {
+                    // Login failed: Invalid credentials
+                    setLoginError('Invalid email or password. Please try again.');
+                    setSubmitting(false); // Re-enable the button
+                    resetForm()
+                }
+            } else {
+                // No user found
+                setLoginError('No user found. Please sign up first.');
+                setSubmitting(false); // Re-enable the button
+            }
         },
     });
 
 
     return (
-        // Main container: Centers the form on the page
         <div className='min-h-screen bg-gray-100 flex justify-center items-center p-4'>
-
-            {/* Form Card */}
             <div className='bg-white shadow-lg rounded-lg p-8 w-full max-w-md'>
-
-                {/* Header */}
                 <div className='mb-6'>
                     <h2 className='text-3xl font-bold text-gray-800'>Sign In</h2>
                 </div>
 
-                {/* Form */}
+                {loginError && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <span className="block sm:inline">{loginError}</span>
+                    </div>
+                )}
+
                 <form onSubmit={formik.handleSubmit} noValidate>
                     {/* Email Input */}
                     <div className='mb-4'>
@@ -58,16 +68,10 @@ const SignIn = () => {
                             type='email'
                             id='email'
                             name='email'
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${formik.touched.email && formik.errors.email
-                                ? 'border-red-500 focus:ring-red-500'
-                                : 'border-gray-300 focus:ring-blue-500'
-                                }`}
-                            // placeholder='you@example.com'
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${formik.touched.email && formik.errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                             {...formik.getFieldProps('email')}
                         />
-                        {formik.touched.email && formik.errors.email ? (
-                            <p className='text-red-500 text-xs mt-1'>{formik.errors.email}</p>
-                        ) : null}
+                        {formik.touched.email && formik.errors.email ? (<p className='text-red-500 text-xs mt-1'>{formik.errors.email}</p>) : null}
                     </div>
 
                     {/* Password Input */}
@@ -79,15 +83,10 @@ const SignIn = () => {
                             type='password'
                             id='password'
                             name='password'
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${formik.touched.password && formik.errors.password
-                                ? 'border-red-500 focus:ring-red-500'
-                                : 'border-gray-300 focus:ring-blue-500'
-                                }`}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${formik.touched.password && formik.errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                             {...formik.getFieldProps('password')}
                         />
-                        {formik.touched.password && formik.errors.password ? (
-                            <p className='text-red-500 text-xs mt-1'>{formik.errors.password}</p>
-                        ) : null}
+                        {formik.touched.password && formik.errors.password ? (<p className='text-red-500 text-xs mt-1'>{formik.errors.password}</p>) : null}
                     </div>
 
                     {/* Submit Button */}
@@ -103,7 +102,7 @@ const SignIn = () => {
                 {/* Footer Link */}
                 <p className='text-center text-gray-600 text-sm mt-6'>
                     Don't have an account?{' '}
-                    <a href='#' className='text-blue-600 hover:underline font-semibold'>
+                    <a onClick={() => navigate('/signup')} className='text-blue-600 hover:underline font-semibold cursor-pointer'>
                         Sign Up
                     </a>
                 </p>
