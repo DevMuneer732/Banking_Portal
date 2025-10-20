@@ -1,81 +1,69 @@
 import { create } from 'zustand';
 
-// --- Local Storage Key ---
 const STORAGE_KEY = 'user_bank_account';
+const AUTH_KEY = 'isLoggedIn';
+const SIGNUP_KEY = 'signup-credentials';
 
-// --- Helper function to initialize state from Local Storage ---
+// 🔹 Helper to safely get initial state from localStorage
 const getInitialState = () => {
-    const storedBankData = localStorage.getItem(STORAGE_KEY);
-    const storedAuth = localStorage.getItem('isLoggedIn');
-
-    // Retrieve initial data or set defaults
-    let initialBalance = 0;
-    let initialEmail = '';
-    let initialName = '';
-
-    if (storedBankData) {
-        const data = JSON.parse(storedBankData);
-        initialBalance = data.balance;
-        initialEmail = data.email;
-        initialName= data.name;
-    } else {
-        // If bank data is missing, check for basic signup credentials
-        const storedCredentials = JSON.parse(localStorage.getItem('signup-credentials') || '{}');
-        initialBalance = 6202.00; // Initialize with design value
-        initialEmail = storedCredentials.email || '';
-        initialName= storedCredentials.name || 'John'
-    }
+    const storedBankData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const storedAuth = localStorage.getItem(AUTH_KEY) === 'true';
+    const storedCredentials = JSON.parse(localStorage.getItem(SIGNUP_KEY) || '{}');
 
     return {
-        isLoggedIn: storedAuth === 'true',
-        balance: initialBalance,
-        email: initialEmail,
-        name: initialName, // Default name
+        isLoggedIn: storedAuth,
+        balance: storedBankData.balance ?? 6202.00, // Default design balance
+        email: storedBankData.email || storedCredentials.email || '',
+        name: storedBankData.name || storedCredentials.name || 'John',
+        currentPage: 'Dashboard',
     };
 };
 
 export const useBankStore = create((set, get) => ({
-    // Initial State
     ...getInitialState(),
 
-    // --- Authentication Actions ---
-    login: (email, name ) => {
-        // Update local storage and state for successful login
-        localStorage.setItem('isLoggedIn', 'true');
-        set({
-            isLoggedIn: true,
-            email,
-            name,
-        });
+    // 🔹 Login and store user info
+    login: (email, name) => {
+        localStorage.setItem(AUTH_KEY, 'true');
+        const current = get();
+        const balance = current.balance || 6202.00;
 
-        // Ensure user's balance data exists in local storage after login
-        const currentBankData = localStorage.getItem(STORAGE_KEY);
-        if (!currentBankData) {
-            const { balance } = get();
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, balance, name }));
-        }
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({ email, name, balance })
+        );
+
+        set({ isLoggedIn: true, email, name, balance });
     },
 
+    // 🔹 Logout and clear session
     logout: () => {
-        // Clear auth status and sensitive local storage items
-        localStorage.removeItem('isLoggedIn');
-        // Note: We keep 'signup-credentials' and 'user_bank_account' for persistence demo
+        localStorage.removeItem(AUTH_KEY);
         set({
             isLoggedIn: false,
             email: '',
-            balance: 0
+            balance: 0,
+            name: '',
+            currentPage: 'Dashboard',
         });
     },
 
-    // --- Account Management Actions (CRUD) ---
+    // 🔹 Navigate between pages
+    setCurrentPage: (pageId) => set({ currentPage: pageId }),
+
+    // 🔹 Add (credit) money
     creditMoney: (amount) => {
         const numAmount = parseFloat(amount);
-        if (numAmount > 0) {
+        if (!isNaN(numAmount) && numAmount > 0) {
             set((state) => {
                 const newBalance = state.balance + numAmount;
-                // Update local storage
                 const { email, name } = state;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, balance: newBalance, name }));
+
+                localStorage.setItem(
+                    STORAGE_KEY,
+                    JSON.stringify({ email, name, balance: newBalance })
+                );
+
                 return { balance: newBalance };
             });
             return true;
@@ -83,14 +71,19 @@ export const useBankStore = create((set, get) => ({
         return false;
     },
 
+    // 🔹 Withdraw (cash out) money
     cashOut: (amount) => {
         const numAmount = parseFloat(amount);
-        if (numAmount > 0 && get().balance >= numAmount) {
+        if (!isNaN(numAmount) && numAmount > 0 && get().balance >= numAmount) {
             set((state) => {
                 const newBalance = state.balance - numAmount;
-                // Update local storage
                 const { email, name } = state;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, balance: newBalance, name }));
+
+                localStorage.setItem(
+                    STORAGE_KEY,
+                    JSON.stringify({ email, name, balance: newBalance })
+                );
+
                 return { balance: newBalance };
             });
             return true;

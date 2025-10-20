@@ -1,186 +1,121 @@
-import React, { useState } from 'react';
-import { Home, Banknote, DollarSign, ArrowUp, ArrowDown } from 'lucide-react';
-import { useBankStore } from '../../store/useBankStore';
+import React, { useState } from "react";
+import { useBankStore } from "../../store/useBankStore";
+import Statistics from "./Statistics";
+import DocsTable from "./DocsTable";
+import TransactionModal from "./TransactionModal";
+import Settings from "./Settings.jsx";
+
+// ✅ Placeholder components for FAQ and LoansPage
+// const FAQ = () => (
+//     <div className="p-6 bg-white rounded shadow">
+//         <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
+//         <p className="text-gray-600">Coming soon...</p>
+//     </div>
+// );
+
+// const LoansPage = () => (
+//     <div className="p-6 bg-white rounded shadow">
+//         <h2 className="text-xl font-semibold mb-4">My Loans</h2>
+//         <p className="text-gray-600">Loan details and management will appear here.</p>
+//     </div>
+// );
 
 const MainDashboard = () => {
-    // ✅ FIX: Select state and actions individually.
-    const balance = useBankStore(state => state.balance);
-    const creditMoney = useBankStore(state => state.creditMoney);
-    const cashOut = useBankStore(state => state.cashOut);
-    
-    const [amount, setAmount] = useState('');
-    const [actionMessage, setActionMessage] = useState('');
+    const { currentPage, balance } = useBankStore();
+    const [openModal, setOpenModal] = useState(false);
 
-    // Handles Credit Money and Cash Out (CRUD operations)
-    const handleAction = (actionType) => {
-        const numAmount = parseFloat(amount);
-        // ... (rest of handleAction logic remains the same)
-        if (isNaN(numAmount) || numAmount <= 0) {
-            setActionMessage('Please enter a valid amount.');
-            return;
-        }
-
-        let success = false;
-        if (actionType === 'credit') {
-            success = creditMoney(numAmount);
-            if (success) {
-                setActionMessage(`✅ Successfully credited $${numAmount.toFixed(2)}.`);
-            }
-        } else if (actionType === 'cashOut') {
-            success = cashOut(numAmount);
-            if (success) {
-                setActionMessage(`✅ Successfully cashed out $${numAmount.toFixed(2)}.`);
-            } else {
-                setActionMessage('❌ Error: Insufficient funds.');
-            }
-        }
-        
-        if (success) {
-            setAmount('');
-        }
-
-        setTimeout(() => setActionMessage(''), 3000);
-    };
-
-    // Dummy data from the portal image
-    // const loans = [
-    //     { name: 'Family house loan', value: '$-120,000', icon: Home, color: 'blue' },
-    //     { name: 'Euretrip loan', value: '$-21,489', icon: Banknote, color: 'green' },
-    //     { name: 'Car loan', value: '$-2,312', icon: DollarSign, color: 'yellow' },
-    // ];
-
-    const docs = [
-        { name: 'ID Card', status: 'Verified', time: '19 May at 2:53 PM' },
-        { name: 'Photo with ID Card', status: 'Pending', time: '09 May at 3:22 AM' },
-        { name: 'Bank Information', status: 'Verified', time: '07 May at 6:44 PM' },
+    // Dummy loan data
+    const loans = [
+        { name: "Family house loan", value: "120,000", path: "/Images/house.png" },
+        { name: "Euretrip loan", value: "21,489", path: "/Images/rome.png" },
+        { name: "Car loan", value: "2,312", path: "/Images/car.png" },
     ];
 
+    // ✅ Render different pages based on Zustand currentPage
+    const renderPage = () => {
+        switch (currentPage) {
+            case "Settings":
+                return <Settings />;
+            case "Loans":
+                return <LoansPage />;
+            case "FAQ":
+                return <FAQ />;
+            default:
+                return (
+                    <>
+                        <section className="mb-6 bg-white px-6 sm:px-8 py-6 rounded shadow-sm border border-gray-100">
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-700 mb-6">Loans</h2>
+
+                            <div className="flex flex-col lg:flex-row gap-6 lg:items-end">
+                                {/* Balance Section */}
+                                <div className="flex-1">
+                                    <div className="flex flex-col gap-3 text-center lg:text-left">
+                                        <p className="text-5xl sm:text-6xl font-bold text-gray-900">
+                                            <span className="text-2xl">$</span>
+                                            {balance}
+                                        </p>
+                                        <p className="text-sm text-gray-500 max-w-md mx-auto lg:mx-0">
+                                            I tried to reflect that vision within dark spirit to outline that seriousness of intention that bank.
+                                        </p>
+                                        <button
+                                            onClick={() => setOpenModal(true)}
+                                            className="w-full lg:w-auto py-3 px-6 bg-green-800 rounded-lg text-white font-medium hover:bg-green-700 transition"
+                                        >
+                                            View details
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Loans Grid */}
+                                <div className="w-full lg:w-auto">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                                        {loans.map((loan, index) => (
+                                            <div
+                                                key={index}
+                                                className="bg-zinc-100 p-5 sm:p-6 rounded-lg shadow-sm hover:shadow-md transition duration-200 border border-gray-100 text-center sm:text-left"
+                                            >
+                                                <div className="bg-zinc-50 inline-block p-3 rounded mb-3">
+                                                    <img
+                                                        src={loan.path}
+                                                        alt={loan.name}
+                                                        height={30}
+                                                        width={30}
+                                                        className="mx-auto sm:mx-0"
+                                                    />
+                                                </div>
+                                                <p className="text-sm font-semibold text-gray-700">{loan.name}</p>
+                                                <p className="text-2xl font-bold text-gray-900 mt-4">
+                                                    <span className="text-sm">-$</span>
+                                                    {loan.value}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-1">Balancing owing</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Docs & Statistics Section */}
+                        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="col-span-1 lg:col-span-2">
+                                <DocsTable />
+                            </div>
+                            <div className="col-span-1">
+                                <Statistics />
+                            </div>
+                        </section>
+
+                        {/* Transaction Modal */}
+                        <TransactionModal isOpen={openModal} onClose={() => setOpenModal(false)} />
+                    </>
+                );
+        }
+    };
 
     return (
-        <main className="flex-1 p-6 md:p-10 bg-gray-50 overflow-y-auto">
-            
-            {/* Current Account Balance (Main Loan/Balance Display) */}
-            <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Loans</h2>
-                <div className="bg-white p-6 rounded-lg shadow-md max-w-xs border-t-4 border-green-700">
-                    <p className="text-sm text-gray-500">Available Balance</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-1">${balance.toFixed(2)}</p> 
-                    <button className="mt-4 bg-green-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-800 transition">
-                        View details
-                    </button>
-                </div>
-            </div>
-
-            {/* Account Management (Credit/Cash Out) */}
-            <div className="bg-white p-6 rounded-lg shadow-lg mb-8 border-t-4 border-blue-500">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Credit / Cash Out</h3>
-                
-                {actionMessage && (
-                    <p className={`mb-4 p-3 rounded text-sm font-medium ${actionMessage.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {actionMessage}
-                    </p>
-                )}
-
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1">
-                        <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
-                            Enter Amount
-                        </label>
-                        <input
-                            id="amount"
-                            type="number"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                            placeholder="0.00"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        />
-                    </div>
-                    
-                    <div className="flex gap-3 pt-7 sm:pt-0 items-end">
-                        <button
-                            onClick={() => handleAction('credit')}
-                            className="flex items-center justify-center w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition disabled:opacity-50"
-                        >
-                            <ArrowUp size={18} className="mr-2" /> Credit Money
-                        </button>
-                        <button
-                            onClick={() => handleAction('cashOut')}
-                            className="flex items-center justify-center w-full sm:w-auto bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition disabled:opacity-50"
-                        >
-                            <ArrowDown size={18} className="mr-2" /> Cash Out
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
-            {/* Loan Summary Cards */}
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {loans.map((loan, index) => (
-                    <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-200 border-t-4 border-gray-100">
-                        <div className={`p-2 rounded-full w-fit mb-3 ${loan.color === 'blue' ? 'bg-blue-100' : loan.color === 'green' ? 'bg-green-100' : 'bg-yellow-100'}`}>
-                            <loan.icon size={20} className={loan.color === 'blue' ? 'text-blue-500' : loan.color === 'green' ? 'text-green-500' : 'text-yellow-500'} />
-                        </div>
-                        <p className="text-lg font-semibold text-gray-800">{loan.name}</p>
-                        <p className="text-2xl font-bold text-gray-900 mt-1">{loan.value}</p>
-                        <p className="text-xs text-gray-500 mt-1">Outstanding</p>
-                    </div>
-                ))}
-            </div> */}
-
-
-            {/* Docs & Statistics Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                {/* Docs Table */}
-                <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold text-gray-800 mb-4">Docs</h3>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {docs.map((doc, index) => (
-                                    <tr key={index}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{doc.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${doc.status === 'Verified' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                                {doc.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.time}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-400">&gt;</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Statistics Card */}
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold text-gray-800 mb-4">Statistics</h3>
-                    <div className="flex justify-between items-center mb-4 text-xs font-medium text-gray-500">
-                        <p className="text-blue-500 font-semibold">$3.430</p>
-                        <p className="text-gray-400 font-semibold">$2.430</p>
-                    </div>
-                    {/* Placeholder for bar chart */}
-                    <div className="h-40 flex items-end justify-around p-2 rounded-lg">
-                        <div className="w-6 bg-blue-500 h-3/4 rounded-t-sm"></div>
-                        <div className="w-6 bg-gray-300 h-1/2 rounded-t-sm"></div>
-                        <div className="w-6 bg-blue-500 h-full rounded-t-sm"></div>
-                        <div className="w-6 bg-gray-300 h-2/3 rounded-t-sm"></div>
-                        <div className="w-6 bg-blue-500 h-1/4 rounded-t-sm"></div>
-                    </div>
-                </div>
-            </div>
-
+        <main className="flex-1 p-4 sm:p-6 md:p-10 bg-gray-50 overflow-y-auto transition-all duration-300">
+            {renderPage()}
         </main>
     );
 };
