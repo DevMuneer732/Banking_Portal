@@ -29,12 +29,12 @@ const SignUp = () => {
             // Log user in via Zustand store
             login(values.email, values.name);
 
-            alert('Sign up successful! Welcome to the Dashboard!');
+            // alert('Sign up successful! Welcome to the Dashboard!');
             resetForm();
             setSubmitting(false);
             
             // Navigate to Dashboard
-            navigate('/dashboard');
+            navigate('/');
         },
     });
 
@@ -42,7 +42,7 @@ const SignUp = () => {
         <div className='min-h-screen bg-gray-100 flex justify-center items-center p-4'>
             <div className='bg-white shadow-lg rounded-lg p-8 w-full max-w-md'>
                 <div className='text-center mb-6'>
-                    <h2 className='text-3xl font-bold text-gray-800'>Create Account</h2>
+                    <h2 className='text-3xl font-bold text-gray-800'>Sign Up</h2>
                 </div>
 
                 <form onSubmit={formik.handleSubmit} noValidate>

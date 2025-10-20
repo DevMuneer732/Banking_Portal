@@ -1,33 +1,36 @@
 import { create } from 'zustand';
 
+// --- Local Storage Key ---
 const STORAGE_KEY = 'user_bank_account';
 
-// Helper function to initialize state from Local Storage
+// --- Helper function to initialize state from Local Storage ---
 const getInitialState = () => {
     const storedBankData = localStorage.getItem(STORAGE_KEY);
     const storedAuth = localStorage.getItem('isLoggedIn');
-    
+
+    // Retrieve initial data or set defaults
     let initialBalance = 0;
     let initialEmail = '';
-    let initialName = 'Robert Del Naja';
-    
+    let initialName = '';
+
     if (storedBankData) {
         const data = JSON.parse(storedBankData);
         initialBalance = data.balance;
         initialEmail = data.email;
-        initialName = data.name;
+        initialName= data.name;
     } else {
-        // If bank data is missing, initialize with design values
+        // If bank data is missing, check for basic signup credentials
         const storedCredentials = JSON.parse(localStorage.getItem('signup-credentials') || '{}');
-        initialBalance = 6202.00; // Initial balance matching the image
+        initialBalance = 6202.00; // Initialize with design value
         initialEmail = storedCredentials.email || '';
+        initialName= storedCredentials.name || 'John'
     }
 
     return {
         isLoggedIn: storedAuth === 'true',
         balance: initialBalance,
         email: initialEmail,
-        name: initialName,
+        name: initialName, // Default name
     };
 };
 
@@ -36,35 +39,31 @@ export const useBankStore = create((set, get) => ({
     ...getInitialState(),
 
     // --- Authentication Actions ---
-    login: (email, name = 'Robert Del Naja') => {
+    login: (email, name ) => {
         // Update local storage and state for successful login
         localStorage.setItem('isLoggedIn', 'true');
-        set({ 
-            isLoggedIn: true, 
-            email, 
+        set({
+            isLoggedIn: true,
+            email,
             name,
         });
 
         // Ensure user's balance data exists in local storage after login
         const currentBankData = localStorage.getItem(STORAGE_KEY);
         if (!currentBankData) {
-             const { balance } = get();
-             localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, balance, name }));
+            const { balance } = get();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, balance, name }));
         }
     },
 
     logout: () => {
         // Clear auth status and sensitive local storage items
         localStorage.removeItem('isLoggedIn');
-        
-        // Simulating full logout and data clearance for security in a real app
-        // For this demo, we keep the bank data but reset the auth status
-        
-        set({ 
-            isLoggedIn: false, 
-            // Only reset these values on state, local storage is kept for sign-in
-            // email: '', 
-            // balance: 0 
+        // Note: We keep 'signup-credentials' and 'user_bank_account' for persistence demo
+        set({
+            isLoggedIn: false,
+            email: '',
+            balance: 0
         });
     },
 

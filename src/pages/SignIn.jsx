@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import { useFormik } from 'formik';
@@ -8,7 +9,7 @@ import { useBankStore } from '../store/useBankStore';
 const SignIn = () => {
     const navigate = useNavigate();
     const login = useBankStore((state) => state.login);
-    const [loginError, setLoginError] = React.useState('');
+    const [loginError, setLoginError] = useState('');
 
     const formik = useFormik({
         initialValues: {
@@ -27,8 +28,8 @@ const SignIn = () => {
                 // Authentication Check
                 if (values.email === storedCredentials.email && values.password === storedCredentials.password) {
                     // Login successful: Update Zustand store and navigate
-                    login(values.email, storedCredentials.name || 'Robert Del Naja');
-                    navigate('/dashboard');
+                    login(values.email, storedCredentials.name || 'John');
+                    navigate('/');
 
                 } else {
                     // Login failed: Invalid credentials
