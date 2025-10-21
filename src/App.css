@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* Utility to visually hide scrollbars but keep scrolling */
+.hide-scrollbar {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+	display: none; /* Chrome, Safari, Opera */
+}
+
+/* Show scrollbar when hovered (useful for discoverability) */
+.show-scrollbar {
+	-ms-overflow-style: auto;
+	scrollbar-width: auto;
+}
+.show-scrollbar::-webkit-scrollbar {
+	display: block;
+	width: 8px;
+}
+.show-scrollbar::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,0.2);
+	border-radius: 9999px;
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Phone  } from 'lucide-react';
 import { signUpSchema } from '../utils/validationSchema';
 import { useBankStore } from '../store/useBankStore';
 
@@ -14,6 +14,7 @@ const SignUp = () => {
         initialValues: {
             name: '',
             email: '',
+            phone: '',
             password: '',
         },
         validationSchema: signUpSchema,
@@ -21,18 +22,19 @@ const SignUp = () => {
             // Save credentials to local storage for sign-in check
             const credentialsToSave = {
                 name: values.name,
-                email: values.email, 
+                email: values.email,
+                phone: values.phone,
                 password: values.password,
             };
             localStorage.setItem('signup-credentials', JSON.stringify(credentialsToSave));
-            
+
             // Log user in via Zustand store
             login(values.email, values.name);
 
             // alert('Sign up successful! Welcome to the Dashboard!');
             resetForm();
             setSubmitting(false);
-            
+
             // Navigate to Dashboard
             navigate('/');
         },
@@ -75,6 +77,21 @@ const SignUp = () => {
                             {...formik.getFieldProps('email')}
                         />
                         {formik.touched.email && formik.errors.email ? (<p className='text-red-500 text-xs mt-1'>{formik.errors.email}</p>) : null}
+                    </div>
+
+                    {/* Phone Input */}
+                    <div className='mb-4'>
+                        <label htmlFor='phone' className='flex items-center gap-2 text-gray-700 text-sm font-bold mb-2'>
+                            <Phone  size={18} /> Phone
+                        </label>
+                        <input
+                            type='tel'
+                            id='phone'
+                            name='phone'
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${formik.touched.phone && formik.errors.phone ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
+                            {...formik.getFieldProps('phone')}
+                        />
+                        {formik.touched.phone && formik.errors.phone ? (<p className='text-red-500 text-xs mt-1'>{formik.errors.email}</p>) : null}
                     </div>
 
                     {/* Password Input */}

@@ -30,7 +30,7 @@ const TransactionModal = ({ isOpen, onClose }) => {
             onClick={onClose} // click outside to close
         >
             <div
-                className="bg-white p-6 rounded-xl w-[90%] max-w-md shadow-2xl border border-gray-100"
+                className="bg-white p-6 rounded w-[90%] max-w-md shadow-2xl border border-gray-100"
                 onClick={(e) => e.stopPropagation()} // prevent close on content click
             >
                 {/* Header */}

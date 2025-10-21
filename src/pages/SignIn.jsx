@@ -1,15 +1,18 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useFormik } from 'formik';
 import { signInSchema } from '../utils/validationSchema';
 import { useBankStore } from '../store/useBankStore';
+
 
 const SignIn = () => {
     const navigate = useNavigate();
     const login = useBankStore((state) => state.login);
     const [loginError, setLoginError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
 
     const formik = useFormik({
         initialValues: {
@@ -80,13 +83,22 @@ const SignIn = () => {
                         <label htmlFor='password' className='flex items-center gap-2 text-gray-700 text-sm font-bold mb-2'>
                             <Lock size={18} /> Password
                         </label>
-                        <input
-                            type='password'
-                            id='password'
-                            name='password'
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${formik.touched.password && formik.errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
-                            {...formik.getFieldProps('password')}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                id='password'
+                                name='password'
+                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 pr-10 ${formik.touched.password && formik.errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
+                                {...formik.getFieldProps('password')}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                         {formik.touched.password && formik.errors.password ? (<p className='text-red-500 text-xs mt-1'>{formik.errors.password}</p>) : null}
                     </div>
 
