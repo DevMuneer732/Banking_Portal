@@ -21,7 +21,7 @@ const Dashboard = () => {
             </div>
 
             {/* Main content */}
-            <div className="flex-1 flex flex-col md:ml-64">
+            <div className="flex-1 flex flex-col md:ml-70">
                 {/* Header always visible on mobile */}
                 <Header toggleSidebar={toggleSidebar} />
 

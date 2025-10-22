@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useBankStore } from "../../store/useBankStore";
+import { X } from "lucide-react"; // icon for close
+import { useBankStore } from "../../../store/useBankStore";
+import toast from "react-hot-toast";
 
 const TransactionModal = ({ isOpen, onClose }) => {
     const { balance, creditMoney, cashOut } = useBankStore();
     const [amount, setAmount] = useState("");
-    const [action, setAction] = useState("credit"); // "credit" or "cashout"
-    const [message, setMessage] = useState("");
+    const [action, setAction] = useState("credit");
 
     if (!isOpen) return null;
 
@@ -17,22 +18,30 @@ const TransactionModal = ({ isOpen, onClose }) => {
         else success = cashOut(amount);
 
         if (success) {
-            setMessage(`✅ Successfully ${action === "credit" ? "added" : "withdrawn"} $${amount}`);
+            toast.success(`Successfully ${action === "credit" ? "added" : "withdrawn"} $${amount}`)
             setAmount("");
         } else {
-            setMessage("❌ Invalid amount or insufficient balance");
+            toast.error("Invalid amount or insufficient balance")
         }
     };
 
     return (
         <div
             className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
-            onClick={onClose} // click outside to close
+            onClick={onClose}
         >
             <div
-                className="bg-white p-6 rounded w-[90%] max-w-md shadow-2xl border border-gray-100"
-                onClick={(e) => e.stopPropagation()} // prevent close on content click
+                className="bg-white relative p-6 rounded w-[90%] max-w-md shadow-2xl border border-gray-100"
+                onClick={(e) => e.stopPropagation()}
             >
+                {/* Top-right Close Button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 transition cursor-pointer"
+                >
+                    <X size={20} />
+                </button>
+
                 {/* Header */}
                 <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
                     Manage Balance
@@ -41,26 +50,26 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 {/* Current Balance */}
                 <p className="text-center text-gray-600 mb-4">
                     Current Balance:{" "}
-                    <span className="font-semibold text-green-700">
-                        ${balance.toFixed(2)}
+                    <span className="font-semibold text-lime-700">
+                        ${balance}
                     </span>
                 </p>
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 justify-center mb-5">
                     <button
-                        className={`px-4 py-2 rounded-lg font-medium transition-all ${action === "credit"
-                                ? "bg-green-600 text-white shadow"
-                                : "bg-gray-100 hover:bg-gray-200"
+                        className={`px-4 py-2 cursor-pointer rounded-lg font-medium transition-all ${action === "credit"
+                            ? "bg-lime-700 text-white shadow"
+                            : "bg-gray-100 hover:bg-gray-200"
                             }`}
                         onClick={() => setAction("credit")}
                     >
                         Add Money
                     </button>
                     <button
-                        className={`px-4 py-2 rounded-lg font-medium transition-all ${action === "cashout"
-                                ? "bg-red-600 text-white shadow"
-                                : "bg-gray-100 hover:bg-gray-200"
+                        className={`px-4 py-2 cursor-pointer rounded-lg font-medium transition-all ${action === "cashout"
+                            ? "bg-red-600 text-white shadow"
+                            : "bg-gray-100 hover:bg-gray-200"
                             }`}
                         onClick={() => setAction("cashout")}
                     >
@@ -74,30 +83,13 @@ const TransactionModal = ({ isOpen, onClose }) => {
                     placeholder="Enter amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-lime-700"
                 />
-
-                {/* Message */}
-                {message && (
-                    <p
-                        className={`text-center text-sm mb-3 ${message.startsWith("✅") ? "text-green-600" : "text-red-600"
-                            }`}
-                    >
-                        {message}
-                    </p>
-                )}
-
-                {/* Footer Buttons */}
-                <div className="flex justify-between mt-4">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-                    >
-                        Close
-                    </button>
+                {/* Submit Button */}
+                <div className="flex justify-end mt-4">
                     <button
                         onClick={handleSubmit}
-                        className="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 transition"
+                        className=" cursor-pointer px-6 py-2 bg-lime-700 text-white rounded-lg hover:bg-lime-800 transition"
                     >
                         {action === "credit" ? "Add" : "Withdraw"}
                     </button>

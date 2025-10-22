@@ -8,13 +8,13 @@ import {
     Cell,
 } from "recharts";
 
-const ArrowUp = () => (
+const ArrowUp = ({ color = "#16A34A" }) => ( // default: Tailwind green-600
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-4 w-4 text-green-500 inline mr-1"
+        className="h-4 w-4 inline mr-1"
         fill="none"
         viewBox="0 0 24 24"
-        stroke="currentColor"
+        stroke={color}
         strokeWidth={3}
     >
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
@@ -61,12 +61,12 @@ const Statistics = () => {
         { name: "$41", value: 41, isHighest: false },
     ];
 
-    const getBarColor = (d) => (d.isHighest ? "#4a7f4a" : "#E5E7EB");
+    const getBarColor = (d) => (d.isHighest ? "#3f6212" : "#F4F4F5");
 
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-white p-2 border border-gray-300 rounded-lg shadow-lg text-xs font-medium">
+                <div className="bg-white p-2 border border-gray-300 rounded shadow-lg text-xs font-medium">
                     <p className="text-gray-800">
                         Value: <span className="font-bold">${payload[0].value}</span>
                     </p>
@@ -77,9 +77,9 @@ const Statistics = () => {
     };
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded shadow-sm border border-gray-100 flex flex-col h-full">
+        <div className="bg-white px-6 py-4 rounded shadow-sm border border-gray-100 flex flex-col h-full">
             {/* Header */}
-            <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <div className="flex justify-between items-center mb-4 sm:mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
                     Statistics
                 </h3>
@@ -89,16 +89,17 @@ const Statistics = () => {
             {/* Income / Expense */}
             <div className="grid grid-cols-2 divide-x divide-gray-200 mb-6">
                 <div className="text-center sm:text-left">
-                    <p className="text-lg sm:text-xl font-bold text-gray-800 mb-1">
-                        <ArrowUp /> $3,430
+                    <p className="text-lg sm:text-xl font-bold text-gray-800 mb-1 flex items-center justify-center sm:justify-start">
+                        <ArrowUp color="#3f6212" />
+                        $3,430
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500">Income</p>
                 </div>
                 <div className="text-center pl-4">
-                    <p className="text-lg sm:text-xl font-bold text-gray-800 mb-1">
+                    <p className="text-lg sm:text-xl font-bold text-gray-800 mb-1 ">
                         <ArrowDown /> $2,430
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-500">Expense</p>
+                    <p className="text-xs sm:text-sm text-gray-500 ">Expense</p>
                 </div>
             </div>
 

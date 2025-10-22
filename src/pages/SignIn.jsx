@@ -5,7 +5,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useFormik } from 'formik';
 import { signInSchema } from '../utils/validationSchema';
 import { useBankStore } from '../store/useBankStore';
-
+import toast from 'react-hot-toast';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -28,22 +28,21 @@ const SignIn = () => {
             if (storedCredentialsString) {
                 const storedCredentials = JSON.parse(storedCredentialsString);
 
-                // Authentication Check
                 if (values.email === storedCredentials.email && values.password === storedCredentials.password) {
-                    // Login successful: Update Zustand store and navigate
-                    login(values.email, storedCredentials.name || 'John');
+                    login(values.email, storedCredentials.name || 'John', storedCredentials.phone);
+                    toast.success(`Successfully login`)
                     navigate('/');
 
                 } else {
-                    // Login failed: Invalid credentials
                     setLoginError('Invalid email or password. Please try again.');
-                    setSubmitting(false); // Re-enable the button
+                    toast.error(`Invalid Email or Password. Please try again.`)
+                    setSubmitting(false); 
                     resetForm()
                 }
             } else {
                 // No user found
                 setLoginError('No user found. Please sign up first.');
-                setSubmitting(false); // Re-enable the button
+                setSubmitting(false); 
             }
         },
     });
@@ -105,7 +104,7 @@ const SignIn = () => {
                     {/* Submit Button */}
                     <button
                         type='submit'
-                        className='w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 disabled:bg-blue-300'
+                        className='w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 disabled:bg-blue-300 cursor-pointer'
                         disabled={!formik.isValid || formik.isSubmitting}
                     >
                         Sign In

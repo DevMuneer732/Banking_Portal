@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { User, Mail, Lock, Eye, EyeOff, Phone  } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Phone } from 'lucide-react';
 import { signUpSchema } from '../utils/validationSchema';
 import { useBankStore } from '../store/useBankStore';
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -27,11 +28,11 @@ const SignUp = () => {
                 password: values.password,
             };
             localStorage.setItem('signup-credentials', JSON.stringify(credentialsToSave));
+            console.log("signup Credentials", credentialsToSave);
 
             // Log user in via Zustand store
-            login(values.email, values.name);
-
-            // alert('Sign up successful! Welcome to the Dashboard!');
+            login(values.email, values.name, values.phone);
+            toast.success(`Welcome, ${values.name}! Your account has been created`)
             resetForm();
             setSubmitting(false);
 
@@ -82,7 +83,7 @@ const SignUp = () => {
                     {/* Phone Input */}
                     <div className='mb-4'>
                         <label htmlFor='phone' className='flex items-center gap-2 text-gray-700 text-sm font-bold mb-2'>
-                            <Phone  size={18} /> Phone
+                            <Phone size={18} /> Phone
                         </label>
                         <input
                             type='tel'
@@ -91,7 +92,7 @@ const SignUp = () => {
                             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${formik.touched.phone && formik.errors.phone ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                             {...formik.getFieldProps('phone')}
                         />
-                        {formik.touched.phone && formik.errors.phone ? (<p className='text-red-500 text-xs mt-1'>{formik.errors.email}</p>) : null}
+                        {formik.touched.phone && formik.errors.phone ? (<p className='text-red-500 text-xs mt-1'>{formik.errors.phone}</p>) : null}
                     </div>
 
                     {/* Password Input */}
@@ -120,7 +121,7 @@ const SignUp = () => {
 
                     <button
                         type='submit'
-                        className='w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 disabled:bg-blue-300'
+                        className='w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 disabled:bg-blue-300 cursor-pointer'
                         disabled={!formik.isValid || formik.isSubmitting}
                     >
                         Sign Up

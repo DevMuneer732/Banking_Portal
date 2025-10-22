@@ -1,4 +1,4 @@
-import { useBankStore } from "../../store/useBankStore";
+import { useBankStore } from "../../../store/useBankStore";
 import { Home, X, User, Mail, DollarSign } from "lucide-react";
 
 const DetailsModal = ({ isOpen, onClose }) => {
@@ -16,7 +16,7 @@ const DetailsModal = ({ isOpen, onClose }) => {
                 <span className="text-sm font-medium text-gray-500">{label}</span>
             </div>
             <span
-                className={`text-sm font-semibold ${highlight ? "text-green-700 text-lg" : "text-gray-800"
+                className={`text-sm font-semibold ${highlight ? "text-lime-700 text-lg" : "text-gray-800"
                     }`}
             >
                 {value}
@@ -27,18 +27,18 @@ const DetailsModal = ({ isOpen, onClose }) => {
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/75 backdrop-blur-sm p-4"
-            onClick={onClose} // Close when clicking outside modal
+            onClick={onClose} 
         >
             <div
                 onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
-                className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 sm:p-8 transform transition-all duration-300"
+                className="bg-white rounded shadow-2xl w-full max-w-lg p-6 sm:p-8 transform transition-all duration-300"
             >
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6 border-b pb-4">
                     <h3 className="text-2xl font-bold text-gray-800">Account Details</h3>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-full hover:bg-gray-100 transition text-gray-600"
+                        className="p-2 cursor-pointer rounded-full hover:bg-gray-100 transition text-gray-600"
                     >
                         <X size={24} />
                     </button>
@@ -61,7 +61,7 @@ const DetailsModal = ({ isOpen, onClose }) => {
                 <div className="mt-8 pt-4 border-t text-center">
                     <button
                         onClick={onClose}
-                        className="w-full py-3 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition shadow-lg"
+                        className="w-full cursor-pointer py-3 bg-lime-800 text-white font-medium rounded-lg hover:bg-lime-900 transition shadow-lg"
                     >
                         Close Details
                     </button>

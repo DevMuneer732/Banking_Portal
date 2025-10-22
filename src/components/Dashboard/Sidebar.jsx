@@ -12,7 +12,6 @@ const menuItems = [
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     const { currentPage, setCurrentPage, name, balance, phone, image } = useBankStore();
-
     const isMobile = useIsMobile();
 
     const handleSelect = useCallback(
@@ -31,7 +30,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 w-full md:w-64 bg-white p-6 transition-transform duration-300 ease-in-out h-screen z-30 shadow-xl md:shadow-none border-r border-gray-100 flex flex-col`}
+                className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 w-full md:w-70 bg-white p-6 transition-transform duration-300 ease-in-out h-screen z-30 shadow-xl md:shadow-none border-r border-gray-100 flex flex-col`}
                 aria-label="Primary sidebar"
             >
                 <div className="flex items-center justify-between mb-6 md:mb-8">
@@ -63,11 +62,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                                     <button
                                         onClick={() => handleSelect(item.id)}
                                         className={`flex items-center space-x-3 w-full text-left p-2 rounded-lg transition duration-150 cursor-pointer ${
-                                            isActive ? 'bg-green-50 text-green-800' : 'text-gray-600 hover:bg-zinc-50'
+                                            isActive ? 'text-lime-800' : 'text-gray-600 hover:bg-zinc-100'
                                         }`}
                                         aria-current={isActive ? 'page' : undefined}
                                     >
-                                        <div className={`p-3 rounded ${isActive ? 'bg-green-800 text-white' : 'bg-zinc-100 text-black'}`}>
+                                        <div className={`p-3 rounded ${isActive ? 'bg-lime-800 text-white' : 'bg-zinc-100 text-black'}`}>
                                             <Icon size={18} />
                                         </div>
                                         <p className="font-semibold truncate">{item.name}</p>
@@ -79,7 +78,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 </nav>
 
                 {/* Balance card pinned to bottom */}
-                <footer className="mt-auto">
+                <footer className="mt-5">
                     <div className="p-4 rounded-lg bg-purple-700/60 text-white shadow-xl">
                         <div className="flex justify-between">
                             <p className="text-sm opacity-90">Balance</p>

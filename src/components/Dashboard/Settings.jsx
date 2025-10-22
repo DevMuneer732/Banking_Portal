@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useBankStore } from "../../store/useBankStore";
 import { Eye, EyeOff } from 'lucide-react';
+import toast from "react-hot-toast";
 
 const Settings = () => {
     const { name, phone, password, image, updateUserInfo } = useBankStore();
@@ -9,7 +10,6 @@ const Settings = () => {
     const [updatedPhone, setUpdatedPhone] = useState(phone);
     const [updatedPassword, setUpdatedPassword] = useState(password);
     const [updatedImage, setUpdatedImage] = useState(image);
-    const [message, setMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false)
 
     // ✅ Handle image upload
@@ -27,12 +27,7 @@ const Settings = () => {
     // ✅ Save changes
     const handleSave = () => {
         updateUserInfo(updatedName, updatedPhone, updatedPassword, updatedImage);
-        setMessage("✅ Profile updated successfully!");
-        setTimeout(() => setMessage(""), 2000);
-        setUpdatedName("");
-        setUpdatedPhone("");
-        setUpdatedPassword("");
-        setUpdatedImage("");
+        toast.success("Profile Updated Successfully.🥳🥳🥳")
     };
 
     return (
@@ -82,9 +77,9 @@ const Settings = () => {
             />
 
             {/* Password */}
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                    Password
-                </label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+                Password
+            </label>
             <div className="relative">
                 <input
                     type={showPassword ? 'text' : 'password'}
@@ -95,7 +90,7 @@ const Settings = () => {
                 <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute mb-5 inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                    className="absolute cursor-pointer mb-5 inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -105,12 +100,11 @@ const Settings = () => {
             {/* Save Button */}
             <button
                 onClick={handleSave}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded transition duration-150"
+                className="w-full bg-lime-700 hover:bg-lime-800 cursor-pointer text-white font-medium px-4 py-2 rounded transition duration-150"
             >
                 Save Changes
             </button>
 
-            {message && <p className="text-green-600 mt-4 text-sm text-center">{message}</p>}
         </div>
     );
 };

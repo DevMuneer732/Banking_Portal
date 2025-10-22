@@ -12,7 +12,7 @@ const docs = [
 const getStatusClasses = (status) => {
     switch (status) {
         case "Verified":
-            return "bg-green-50 text-green-700 border border-green-100";
+            return "bg-lime-50 text-lime-600 border border-lime-100";
         case "Declined":
             return "bg-red-50 text-red-700 border border-red-100";
         case "Waiting":

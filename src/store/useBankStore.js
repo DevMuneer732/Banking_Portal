@@ -3,7 +3,7 @@ import { create } from "zustand";
 const STORAGE_KEY = "user_bank_account";
 const AUTH_KEY = "isLoggedIn";
 const SIGNUP_KEY = "signup-credentials";
-const DEFAULT_AVATAR= "/Images/person.png"
+const DEFAULT_AVATAR = "/Images/person.png"
 
 const getInitialState = () => {
     if (typeof window === "undefined")
@@ -37,16 +37,17 @@ const getInitialState = () => {
 export const useBankStore = create((set, get) => ({
     ...getInitialState(),
 
-    login: (email, name) => {
+    login: (email, name,phone) => {
         localStorage.setItem(AUTH_KEY, "true");
         const balance = get().balance || 6202.0;
+        const image = get().image || DEFAULT_AVATAR
 
         localStorage.setItem(
             STORAGE_KEY,
-            JSON.stringify({ email, name, balance })
+            JSON.stringify({ email, name, balance, phone, image })
         );
 
-        set({ isLoggedIn: true, email, name, balance });
+        set({ isLoggedIn: true, email, name, balance, phone, image });
     },
 
     logout: () => {
