@@ -20,6 +20,7 @@ const TransactionModal = ({ isOpen, onClose }) => {
         if (success) {
             toast.success(`Successfully ${action === "credit" ? "added" : "withdrawn"} $${amount}`)
             setAmount("");
+            setTimeout(() => onClose(), 2000)
         } else {
             toast.error("Invalid amount or insufficient balance")
         }

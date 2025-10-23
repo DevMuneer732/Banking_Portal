@@ -27,7 +27,7 @@ const Settings = () => {
     // ✅ Save changes
     const handleSave = () => {
         updateUserInfo(updatedName, updatedPhone, updatedPassword, updatedImage);
-        toast.success("Profile Updated Successfully.🥳🥳🥳")
+        toast.success("Profile Updated Successfully...")
     };
 
     return (

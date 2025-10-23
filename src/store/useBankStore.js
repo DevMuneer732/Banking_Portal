@@ -37,17 +37,17 @@ const getInitialState = () => {
 export const useBankStore = create((set, get) => ({
     ...getInitialState(),
 
-    login: (email, name,phone) => {
+    login: (email, name, phone, password) => {
         localStorage.setItem(AUTH_KEY, "true");
         const balance = get().balance || 6202.0;
-        const image = get().image || DEFAULT_AVATAR
+        const image = get().image || DEFAULT_AVATAR;
 
         localStorage.setItem(
             STORAGE_KEY,
-            JSON.stringify({ email, name, balance, phone, image })
+            JSON.stringify({ email, name, balance, phone, image, password })
         );
 
-        set({ isLoggedIn: true, email, name, balance, phone, image });
+        set({ isLoggedIn: true, email, name, balance, phone, image, password });
     },
 
     logout: () => {

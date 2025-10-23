@@ -29,7 +29,7 @@ const SignIn = () => {
                 const storedCredentials = JSON.parse(storedCredentialsString);
 
                 if (values.email === storedCredentials.email && values.password === storedCredentials.password) {
-                    login(values.email, storedCredentials.name || 'John', storedCredentials.phone);
+                    login(values.email, storedCredentials.name || 'John', storedCredentials.phone, storedCredentials.password);
                     toast.success(`Successfully login`)
                     navigate('/');
 

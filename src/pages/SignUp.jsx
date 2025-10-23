@@ -31,7 +31,7 @@ const SignUp = () => {
             console.log("signup Credentials", credentialsToSave);
 
             // Log user in via Zustand store
-            login(values.email, values.name, values.phone);
+            login(values.email, values.name, values.phone, values.password);
             toast.success(`Welcome, ${values.name}! Your account has been created`)
             resetForm();
             setSubmitting(false);
