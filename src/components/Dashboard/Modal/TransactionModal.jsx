@@ -7,23 +7,28 @@ const TransactionModal = ({ isOpen, onClose }) => {
     const { balance, creditMoney, cashOut } = useBankStore();
     const [amount, setAmount] = useState("");
     const [action, setAction] = useState("credit");
+    const [loading, setLoading] = useState(false)
 
     if (!isOpen) return null;
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!amount) return;
+        setLoading(true)
 
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         let success = false;
+
         if (action === "credit") success = creditMoney(amount);
         else success = cashOut(amount);
 
         if (success) {
             toast.success(`Successfully ${action === "credit" ? "added" : "withdrawn"} $${amount}`)
             setAmount("");
-            setTimeout(() => onClose(), 2000)
+            onClose()
         } else {
             toast.error("Invalid amount or insufficient balance")
         }
+        setLoading(false)
     };
 
     return (
@@ -88,12 +93,41 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 />
                 {/* Submit Button */}
                 <div className="flex justify-end mt-4">
-                    <button
-                        onClick={handleSubmit}
-                        className=" cursor-pointer px-6 py-2 bg-lime-700 text-white rounded-lg hover:bg-lime-800 transition"
-                    >
-                        {action === "credit" ? "Add" : "Withdraw"}
-                    </button>
+                    <div className="flex justify-end mt-4">
+                        <button
+                            onClick={handleSubmit}
+                            disabled={loading}
+                            className="flex cursor-pointer items-center justify-center gap-2 px-6 py-2 bg-lime-700 text-white rounded-lg hover:bg-lime-800 transition disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {loading ? (
+                                <>
+                                    <svg
+                                        className="animate-spin h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        />
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                        />
+                                    </svg>
+                                    <span>Processing...</span>
+                                </>
+                            ) : (
+                                <span>{action === "credit" ? "Add" : "Withdraw"}</span>
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

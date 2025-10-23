@@ -6,12 +6,14 @@ import { useFormik } from 'formik';
 import { signInSchema } from '../utils/validationSchema';
 import { useBankStore } from '../store/useBankStore';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const SignIn = () => {
     const navigate = useNavigate();
     const login = useBankStore((state) => state.login);
     const [loginError, setLoginError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false)
 
 
     const formik = useFormik({
@@ -29,20 +31,26 @@ const SignIn = () => {
                 const storedCredentials = JSON.parse(storedCredentialsString);
 
                 if (values.email === storedCredentials.email && values.password === storedCredentials.password) {
-                    login(values.email, storedCredentials.name || 'John', storedCredentials.phone, storedCredentials.password);
-                    toast.success(`Successfully login`)
-                    navigate('/');
+                    // show loader, simulate short processing, then login + navigate
+                    setLoading(true);
+                    setTimeout(() => {
+                        login(values.email, storedCredentials.name || 'John', storedCredentials.phone, storedCredentials.password);
+                        toast.success('Successfully logged in');
+                        setLoading(false);
+                        setSubmitting(false);
+                        navigate('/');
+                    }, 1200);
 
                 } else {
                     setLoginError('Invalid email or password. Please try again.');
                     toast.error(`Invalid Email or Password. Please try again.`)
-                    setSubmitting(false); 
+                    setSubmitting(false);
                     resetForm()
                 }
             } else {
                 // No user found
                 setLoginError('No user found. Please sign up first.');
-                setSubmitting(false); 
+                setSubmitting(false);
             }
         },
     });
@@ -50,6 +58,7 @@ const SignIn = () => {
 
     return (
         <div className='min-h-screen bg-gray-100 flex justify-center items-center p-4'>
+            <LoadingSpinner active={loading || formik.isSubmitting} text="Signing in..." />
             <div className='bg-white shadow-lg rounded-lg p-8 w-full max-w-md'>
                 <div className='mb-6'>
                     <h2 className='text-3xl font-bold text-gray-800'>Sign In</h2>
@@ -104,10 +113,20 @@ const SignIn = () => {
                     {/* Submit Button */}
                     <button
                         type='submit'
-                        className='w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 disabled:bg-blue-300 cursor-pointer'
-                        disabled={!formik.isValid || formik.isSubmitting}
+                        className='w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 disabled:bg-blue-300 cursor-pointer flex items-center justify-center'
+                        disabled={!formik.isValid || formik.isSubmitting || loading}
                     >
-                        Sign In
+                        {(loading || formik.isSubmitting) ? (
+                            <>
+                                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                                Signing in...
+                            </>
+                        ) : (
+                            'Sign In'
+                        )}
                     </button>
                 </form>
 

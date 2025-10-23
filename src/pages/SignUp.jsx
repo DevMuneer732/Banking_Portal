@@ -5,11 +5,13 @@ import { User, Mail, Lock, Eye, EyeOff, Phone } from 'lucide-react';
 import { signUpSchema } from '../utils/validationSchema';
 import { useBankStore } from '../store/useBankStore';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const login = useBankStore((state) => state.login);
+    const [loading, setLoading] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -21,28 +23,30 @@ const SignUp = () => {
         validationSchema: signUpSchema,
         onSubmit: (values, { resetForm, setSubmitting }) => {
             // Save credentials to local storage for sign-in check
-            const credentialsToSave = {
-                name: values.name,
-                email: values.email,
-                phone: values.phone,
-                password: values.password,
-            };
-            localStorage.setItem('signup-credentials', JSON.stringify(credentialsToSave));
-            console.log("signup Credentials", credentialsToSave);
-
-            // Log user in via Zustand store
-            login(values.email, values.name, values.phone, values.password);
-            toast.success(`Welcome, ${values.name}! Your account has been created`)
-            resetForm();
-            setSubmitting(false);
-
-            // Navigate to Dashboard
-            navigate('/');
+            setLoading(true)
+            setTimeout(() => {
+                const credentialsToSave = {
+                    name: values.name,
+                    email: values.email,
+                    phone: values.phone,
+                    password: values.password,
+                };
+                localStorage.setItem('signup-credentials', JSON.stringify(credentialsToSave));
+                // Log user in via Zustand store
+                login(values.email, values.name, values.phone, values.password);
+                toast.success(`Welcome, ${values.name}! Your account has been created`)
+                setLoading(false)
+                resetForm();
+                setSubmitting(false);
+                navigate('/');
+            }
+            , 1200)
         },
     });
 
     return (
         <div className='min-h-screen bg-gray-100 flex justify-center items-center p-4'>
+            <LoadingSpinner active={loading || formik.isSubmitting} text="Sign Up..." />
             <div className='bg-white shadow-lg rounded-lg p-8 w-full max-w-md'>
                 <div className='text-center mb-6'>
                     <h2 className='text-3xl font-bold text-gray-800'>Sign Up</h2>

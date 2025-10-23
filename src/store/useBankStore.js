@@ -9,6 +9,7 @@ const getInitialState = () => {
     if (typeof window === "undefined")
         return {
             isLoggedIn: false,
+            // users:[],
             balance: 6202.0,
             email: "",
             name: "John",

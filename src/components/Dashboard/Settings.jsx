@@ -10,7 +10,8 @@ const Settings = () => {
     const [updatedPhone, setUpdatedPhone] = useState(phone);
     const [updatedPassword, setUpdatedPassword] = useState(password);
     const [updatedImage, setUpdatedImage] = useState(image);
-    const [showPassword, setShowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     // ✅ Handle image upload
     const handleImageUpload = (e) => {
@@ -25,13 +26,16 @@ const Settings = () => {
     };
 
     // ✅ Save changes
-    const handleSave = () => {
+    const handleSave = async () => {
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         updateUserInfo(updatedName, updatedPhone, updatedPassword, updatedImage);
+        setLoading(false)
         toast.success("Profile Updated Successfully...")
     };
 
     return (
-        <div className="p-6 max-w-lg mx-auto bg-white shadow-lg rounded-lg">
+        <div className="px-6 py-4 max-w-lg mx-auto bg-white shadow-lg rounded-lg">
             <h2 className="text-2xl text-center font-semibold mb-6 text-gray-800">
                 Account Settings
             </h2>
@@ -98,11 +102,41 @@ const Settings = () => {
 
 
             {/* Save Button */}
+
             <button
                 onClick={handleSave}
-                className="w-full bg-lime-700 hover:bg-lime-800 cursor-pointer text-white font-medium px-4 py-2 rounded transition duration-150"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 bg-lime-700 hover:bg-lime-800 
+            cursor-pointer text-white font-medium px-4 py-2 rounded transition duration-150 
+            disabled:opacity-70 disabled:cursor-not-allowed"
             >
-                Save Changes
+                {loading ? (
+                    <>
+                        <svg
+                            className="animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            />
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            />
+                        </svg>
+                        <span>Processing...</span>
+                    </>
+                ) : (
+                    "Save Changes"
+                )}
             </button>
 
         </div>

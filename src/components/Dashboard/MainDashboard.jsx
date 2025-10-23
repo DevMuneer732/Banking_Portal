@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useBankStore } from "../../store/useBankStore.js";
 import Statistics from "./Statistics.jsx";
 import DocsTable from "./DocsTable.jsx";
@@ -10,12 +10,23 @@ import DetailsModal from "./Modal/DetailsModal.jsx";
 import { ArrowLeftRight, LogOut } from 'lucide-react';
 import LogoutModal from "./Modal/LogoutModal.jsx";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../LoadingSpinner.jsx";
 
 const MainDashboard = () => {
     const { currentPage, balance, logout } = useBankStore();
     const [openModal, setOpenModal] = useState(false);
     const [openTransactionModal, setOpenTransactionModal] = useState(false);
-    const [openLogoutModal, setOpenLogoutModal] = useState(false)
+    const [openLogoutModal, setOpenLogoutModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!currentPage) return;
+        setLoading(true);
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 800); 
+        return () => clearTimeout(timer);
+    }, [currentPage]);
 
     // Dummy loan data
     const loans = [
@@ -140,7 +151,7 @@ const MainDashboard = () => {
                             isOpen={openLogoutModal}
                             onClose={() => setOpenLogoutModal(false)}
                             onConfirm={() => {
-                                logout(); 
+                                logout();
                                 toast.success("Logout Successfully...")
                                 setOpenLogoutModal(false);
                             }}
@@ -152,6 +163,7 @@ const MainDashboard = () => {
 
     return (
         <main className="flex-1 p-2 sm:p-3 md:p-4 pt-[5.5rem] sm:pt-[5rem] md:pt-[2rem] bg-gray-50 overflow-y-auto transition-all duration-300 h-full">
+            <LoadingSpinner active={loading} />
             {renderPage()}
         </main>
 
